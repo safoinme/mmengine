@@ -735,6 +735,10 @@ class MLflowVisBackend(BaseVisBackend):
         if self._tags is not None:
             self._mlflow.set_tags(self._tags)
         if self._params is not None:
+            # Ensure that no value in the dictionary exceeds 250 characters in length
+            for key, value in self._params.items():
+                if len(str(value)) > 250:
+                    self._params[key] = str(value)[:250]
             self._mlflow.log_params(self._params)
 
     @property  # type: ignore
