@@ -767,8 +767,8 @@ class MLflowVisBackend(BaseVisBackend):
                 tracked_cfg[k] = self.cfg[k]
             params = self._flatten(tracked_cfg)
             for key, value in params.items():
-            if len(str(value)) > 250:
-                params[key] = str(value)[:250]
+                if len(str(value)) > 250:
+                    params[key] = str(value)[:250]
             self._mlflow.log_params(**params)
         self._mlflow.log_text(self.cfg.pretty_text, 'config.py')
 
