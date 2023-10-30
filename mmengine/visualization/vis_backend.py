@@ -756,20 +756,20 @@ class MLflowVisBackend(BaseVisBackend):
         """
         self.cfg = config
         if self._tracked_config_keys is None:
-            params = self._flatten(self.cfg)
-            for key, value in params.items():
+            # Ensure that no value in the dictionary exceeds 250 characters in length
+            for key, value in self._flatten(self.cfg).items():
                 if len(str(value)) > 250:
-                    params[key] = str(value)[:250]
-            self._mlflow.log_params(**params)
+                    self._flatten(self.cfg)[key] = str(value)[:250]
+            self._mlflow.log_params(self._flatten(self.cfg))
         else:
             tracked_cfg = dict()
             for k in self._tracked_config_keys:
                 tracked_cfg[k] = self.cfg[k]
-            params = self._flatten(tracked_cfg)
-            for key, value in params.items():
+            # Ensure that no value in the dictionary exceeds 250 characters in length
+            for key, value in self._flatten(tracked_cfg).items():
                 if len(str(value)) > 250:
-                    params[key] = str(value)[:250]
-            self._mlflow.log_params(**params)
+                    self._flatten(tracked_cfg)[key] = str(value)[:250]
+            self._mlflow.log_params(self._flatten(tracked_cfg))
         self._mlflow.log_text(self.cfg.pretty_text, 'config.py')
 
     @force_init_env
