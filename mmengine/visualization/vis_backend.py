@@ -759,7 +759,7 @@ class MLflowVisBackend(BaseVisBackend):
 
         # Save the config as a JSON file
         with open('temp_config.json', 'w') as f:
-            json.dump(self.cfg, f)
+            json.dump(self.cfg.to_dict(), f)
 
         # Log the config file to MLflow
         self._mlflow.log_artifact('config.json')
