@@ -9,6 +9,7 @@ import warnings
 from abc import ABCMeta, abstractmethod
 from collections.abc import MutableMapping
 from typing import Any, Callable, List, Optional, Sequence, Union
+import json
 
 import cv2
 import numpy as np
@@ -755,23 +756,24 @@ class MLflowVisBackend(BaseVisBackend):
             config (Config): The Config object
         """
         self.cfg = config
-        if self._tracked_config_keys is None:
-            # Ensure that no value in the dictionary exceeds 250 characters in length
-            for key, value in self._flatten(self.cfg).items():
-                if len(str(value)) > 250:
-                    self._flatten(self.cfg)[key] = str(value)[:250]
-            print_log(f"logging params: {self._flatten(self.cfg)}")
-            self._mlflow.log_params(self._flatten(self.cfg))
-        else:
+
+        # Save the config as a JSON file
+        with open('temp_config.json', 'w') as f:
+            json.dump(self.cfg, f)
+
+        # Log the config file to MLflow
+        self._mlflow.log_artifact('config.json')
+
+        if self._tracked_config_keys is not None:
             tracked_cfg = dict()
             for k in self._tracked_config_keys:
                 tracked_cfg[k] = self.cfg[k]
-            # Ensure that no value in the dictionary exceeds 250 characters in length
-            for key, value in self._flatten(tracked_cfg).items():
-                if len(str(value)) > 250:
-                    self._flatten(tracked_cfg)[key] = str(value)[:250]
-            print_log(f"logging params: {self._flatten(tracked_cfg)}")
-            self._mlflow.log_params(self._flatten(tracked_cfg))
+            # Save the tracked config as a JSON file
+            with open('temp_tracked_config.json', 'w') as f:
+                json.dump(tracked_cfg, f)
+            # Log the tracked config file to MLflow
+            self._mlflow.log_artifact('tracked_config.json')
+
         self._mlflow.log_text(self.cfg.pretty_text, 'config.py')
 
     @force_init_env
