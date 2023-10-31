@@ -760,6 +760,7 @@ class MLflowVisBackend(BaseVisBackend):
             for key, value in self._flatten(self.cfg).items():
                 if len(str(value)) > 250:
                     self._flatten(self.cfg)[key] = str(value)[:250]
+            print_log(f"logging params: {self._flatten(self.cfg)}")
             self._mlflow.log_params(self._flatten(self.cfg))
         else:
             tracked_cfg = dict()
@@ -769,6 +770,7 @@ class MLflowVisBackend(BaseVisBackend):
             for key, value in self._flatten(tracked_cfg).items():
                 if len(str(value)) > 250:
                     self._flatten(tracked_cfg)[key] = str(value)[:250]
+            print_log(f"logging params: {self._flatten(tracked_cfg)}")
             self._mlflow.log_params(self._flatten(tracked_cfg))
         self._mlflow.log_text(self.cfg.pretty_text, 'config.py')
 
@@ -849,10 +851,8 @@ class MLflowVisBackend(BaseVisBackend):
             if isinstance(v, MutableMapping):
                 items.update(self._flatten(v, new_key, sep=sep))
             elif isinstance(v, list):
-                if any(isinstance(x, dict) for x in v):
-                    for i, x in enumerate(v):
-                        items.update(
-                            self._flatten(x, new_key + sep + str(i), sep=sep))
+                if all(isinstance(x, dict) for x in v):
+                    items[new_key] = v  # keep the list of dictionaries as is
                 else:
                     items[new_key] = v
             else:
