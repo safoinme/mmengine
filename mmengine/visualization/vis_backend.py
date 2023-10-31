@@ -762,7 +762,7 @@ class MLflowVisBackend(BaseVisBackend):
             json.dump(self.cfg.to_dict(), f)
 
         # Log the config file to MLflow
-        self._mlflow.log_artifact('config.json')
+        self._mlflow.log_artifact('temp_config.json')
 
         if self._tracked_config_keys is not None:
             tracked_cfg = dict()
@@ -772,7 +772,7 @@ class MLflowVisBackend(BaseVisBackend):
             with open('temp_tracked_config.json', 'w') as f:
                 json.dump(tracked_cfg, f)
             # Log the tracked config file to MLflow
-            self._mlflow.log_artifact('tracked_config.json')
+            self._mlflow.log_artifact('temp_tracked_config.json')
 
         self._mlflow.log_text(self.cfg.pretty_text, 'config.py')
 
