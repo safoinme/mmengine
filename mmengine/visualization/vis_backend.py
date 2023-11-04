@@ -679,8 +679,7 @@ class MLflowVisBackend(BaseVisBackend):
                  tags: Optional[dict] = None,
                  params: Optional[dict] = None,
                  tracking_uri: Optional[str] = None,
-                 artifact_suffix: SUFFIX_TYPE = ('.json', '.log', '.py',
-                                                 'yaml'),
+                 artifact_suffix: SUFFIX_TYPE = ('.json', '.log', '.py', 'yaml', '.pth', '.txt', 'last_checkpoint'),
                  tracked_config_keys: Optional[dict] = None):
         super().__init__(save_dir)
         self._exp_name = exp_name
@@ -758,21 +757,21 @@ class MLflowVisBackend(BaseVisBackend):
         self.cfg = config
 
         # Save the config as a JSON file
-        with open('temp_config.json', 'w') as f:
+        with open('config.json', 'w') as f:
             json.dump(self.cfg.to_dict(), f)
 
         # Log the config file to MLflow
-        self._mlflow.log_artifact('temp_config.json')
+        self._mlflow.log_artifact('config.json')
 
         if self._tracked_config_keys is not None:
             tracked_cfg = dict()
             for k in self._tracked_config_keys:
                 tracked_cfg[k] = self.cfg[k]
             # Save the tracked config as a JSON file
-            with open('temp_tracked_config.json', 'w') as f:
+            with open('tracked_config.json', 'w') as f:
                 json.dump(tracked_cfg, f)
             # Log the tracked config file to MLflow
-            self._mlflow.log_artifact('temp_tracked_config.json')
+            self._mlflow.log_artifact('tracked_config.json')
 
         self._mlflow.log_text(self.cfg.pretty_text, 'config.py')
 
@@ -1177,7 +1176,7 @@ class DVCLiveVisBackend(BaseVisBackend):
 
     def __init__(self,
                  save_dir: str,
-                 artifact_suffix: SUFFIX_TYPE = ('.json', '.py', 'yaml'),
+                 artifact_suffix: SUFFIX_TYPE = ('.json', '.log', '.py', 'yaml', '.pth', '.txt', 'last_checkpoint'),
                  init_kwargs: Optional[dict] = None):
         super().__init__(save_dir)
         self._artifact_suffix = artifact_suffix

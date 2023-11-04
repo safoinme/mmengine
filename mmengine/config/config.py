@@ -512,7 +512,7 @@ class Config:
         Returns:
             Config: Config object generated from ``cfg_str``.
         """
-        if file_format not in ['.py', '.json', '.yaml', '.yml']:
+        if file_format not in ['.py', '.json', '.yaml', '.yml', '.pth', '.txt']:
             raise OSError('Only py/yml/yaml/json type are supported now!')
         if file_format != '.py' and 'dict(' in cfg_str:
             # check if users specify a wrong suffix for python
@@ -849,7 +849,7 @@ class Config:
         filename = osp.abspath(osp.expanduser(filename))
         check_file_exist(filename)
         fileExtname = osp.splitext(filename)[1]
-        if fileExtname not in ['.py', '.json', '.yaml', '.yml']:
+        if fileExtname not in ['.py', '.json', '.yaml', '.yml', '.pth', '.txt']:
             raise OSError('Only py/yml/yaml/json type are supported now!')
         try:
             with tempfile.TemporaryDirectory() as temp_config_dir:
@@ -922,7 +922,7 @@ class Config:
                         for key, value in global_locals_var.items()
                         if (key not in ori_keys and not key.startswith('__'))
                     }
-                elif filename.endswith(('.yml', '.yaml', '.json')):
+                elif filename.endswith(('.yml', '.yaml', '.json', '.pth', '.txt')):
                     cfg_dict = load(temp_config_file.name)
                 # close temp file
                 for key, value in list(cfg_dict.items()):
