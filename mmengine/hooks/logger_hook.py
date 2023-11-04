@@ -79,7 +79,7 @@ class LoggerHook(Hook):
                  ignore_last: bool = True,
                  interval_exp_name: int = 1000,
                  out_dir: Optional[Union[str, Path]] = None,
-                 out_suffix: SUFFIX_TYPE = ('.json', '.log', '.py', 'yaml'),
+                 out_suffix: SUFFIX_TYPE = ('.json', '.log', '.py', 'yaml', '.pth', '.txt'),
                  keep_local: bool = True,
                  file_client_args: Optional[dict] = None,
                  log_metric_by_epoch: bool = True,
